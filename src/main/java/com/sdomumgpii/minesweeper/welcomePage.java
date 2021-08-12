@@ -49,15 +49,21 @@ public class welcomePage extends javax.swing.JFrame {
         jTextArea1.setColumns (100);
         jTextArea1.setLineWrap (true);
         jTextArea1.setWrapStyleWord (false);
-        //
     }
     
     public welcomePage() {
         initComponents();
         reglas();
         clock hora = new clock();
-        String hr = hora.hora();
-        relojwp.setText(hr);
+        Thread h1 = new Thread(hora.h1);
+        h1.start();
+        try {
+            h1.sleep(1000);
+            String hr = hora.hora();
+            relojwp.setText(hr);            
+        } catch (InterruptedException ex) {
+            Logger.getLogger(welcomePage.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -123,11 +129,20 @@ public class welcomePage extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jTextArea1.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         jScrollPane1.setViewportView(jTextArea1);
-        jTextArea1.getAccessibleContext().setAccessibleParent(null);
 
         jButton1.setText("Modo Básico 5x5");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Modo Experto 10x10");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -180,6 +195,16 @@ public class welcomePage extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(677, 609));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        tableroJuego tablero = new tableroJuego(5,5,8);
+        tablero.pruebas();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        tableroJuego tablero = new tableroJuego(10,10,25);
+        tablero.pruebas();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

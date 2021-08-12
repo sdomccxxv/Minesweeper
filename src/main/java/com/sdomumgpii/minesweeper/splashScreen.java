@@ -155,6 +155,8 @@ public class splashScreen extends javax.swing.JFrame implements Runnable {
                 //progress.setText(Integer.toString(i)+"%");
                 ProgressBar.setValue(i);
                 clock hora = new clock();
+                Thread h1 = new Thread(hora.h1);
+                h1.start();
                 String hr = hora.hora();
                 reloj.setText(hr);
             }
