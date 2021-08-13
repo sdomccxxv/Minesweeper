@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -197,13 +198,51 @@ public class welcomePage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        tableroJuego tablero = new tableroJuego(5,5,8);
+        int minas = 0;
+        
+        minas = Integer.parseInt(JOptionPane.showInputDialog("Indique la cantidad de minas"));
+        
+        if(minas>24){
+            JOptionPane.showMessageDialog(rootPane, "El numero de minas no puede ser mayor a 24");
+            minas = Integer.parseInt(JOptionPane.showInputDialog("Indique la cantidad de minas"));
+        }
+        
+        tableroJuego tablero = new tableroJuego(5,5,minas);
         tablero.pruebas();
+        System.out.println("---");
+        tablero.pruebasP();
+        
+        frmTablero formTablero = new frmTablero();
+        formTablero.crearTablero(5,5,minas);
+        formTablero.crearCasillas(5,5,minas);
+        formTablero.setSize(325,445);
+        
+        formTablero.show();
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        tableroJuego tablero = new tableroJuego(10,10,25);
+        int minas = 0;
+        
+        minas = Integer.parseInt(JOptionPane.showInputDialog("Indique la cantidad de minas"));
+        
+        if(minas>99){
+            JOptionPane.showMessageDialog(rootPane, "El numero de minas no puede ser mayor a 99");
+            minas = Integer.parseInt(JOptionPane.showInputDialog("Indique la cantidad de minas"));
+        }
+        
+        tableroJuego tablero = new tableroJuego(10,10,minas);
         tablero.pruebas();
+        System.out.println("---");
+        tablero.pruebasP();
+        
+        frmTablero formTablero = new frmTablero();
+        formTablero.crearTablero(10,10,minas);
+        formTablero.crearCasillas(10,10,minas);
+        formTablero.setSize(575,700);
+        
+        formTablero.show();
+        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

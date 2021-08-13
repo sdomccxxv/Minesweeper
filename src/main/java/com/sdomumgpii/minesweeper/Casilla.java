@@ -8,14 +8,14 @@ public class Casilla {
     private int posfila;
     private int poscol;
     private boolean mina;
+    private int numMinasA;
+    private boolean casAbierta;
 
     public Casilla(int posfila, int poscol) {
         this.posfila = posfila;
         this.poscol = poscol;
     }
     
-    
-
     public int getPosfila() {
         return posfila;
     }
@@ -38,6 +38,26 @@ public class Casilla {
 
     public void setMina(boolean mina) {
         this.mina = mina;
+    }
+
+    public int getNumMinasA() {
+        return numMinasA;
+    }
+
+    public void setNumMinasA(int numMinasA) {
+        this.numMinasA = numMinasA;
+    }
+    
+    public void incrementarMinasA(){
+        this.numMinasA++;
+    }
+
+    public boolean isCasAbierta() {
+        return casAbierta;
+    }
+
+    public void setCasAbierta(boolean casAbierta) {
+        this.casAbierta = casAbierta;
     }
     
     
