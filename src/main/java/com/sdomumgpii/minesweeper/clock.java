@@ -29,13 +29,7 @@ public class clock implements Runnable{
         String hr;
         hr = null;
 
-        if (hora <= 9 || minuto <= 9 || segundo <= 9) {
-            String h = "0" + hora;
-            String m = "0" + minuto;
-            String s = "0" + hora;
-        }
-
-        hr = hora + ":" + minuto + ":" + segundo;
+        hr = (hora<=9?"0"+hora:hora) + ":" + (minuto<=9?"0"+minuto:minuto) + ":" + (segundo<=9?"0"+segundo:segundo);
             
         return hr;
     }

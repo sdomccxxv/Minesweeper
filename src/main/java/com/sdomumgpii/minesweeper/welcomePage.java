@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import static java.lang.Thread.sleep;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -22,6 +24,9 @@ public class welcomePage extends javax.swing.JFrame {
     /**
      * Creates new form welcomePage
      */
+    public int  miliseg, seg, min, hora, minuto, segundo;;
+    boolean estado;
+    Thread hilo;
    
     public void reglas(){
         File file = new File("reglas.txt");
@@ -55,16 +60,46 @@ public class welcomePage extends javax.swing.JFrame {
     public welcomePage() {
         initComponents();
         reglas();
-        clock hora = new clock();
-        Thread h1 = new Thread(hora.h1);
-        h1.start();
-        try {
-            h1.sleep(1000);
-            String hr = hora.hora();
-            relojwp.setText(hr);            
-        } catch (InterruptedException ex) {
-            Logger.getLogger(welcomePage.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        tempo();
+    }
+    
+    public void tempo(){
+        estado = true;
+        
+        hilo = new Thread(){
+          public void run()  {
+              for(;;){
+                  if(estado == true){
+                      try{
+                          sleep(1);
+                          relojwp.setText(hora());
+                      }catch(Exception e) {
+                          
+                      }
+                  }else{
+                     break; 
+                  }
+              }
+          }
+        };
+        hilo.start();
+    }
+    
+    public String hora(){
+        
+        
+        Calendar calendario = Calendar.getInstance();
+        hora = calendario.get(Calendar.HOUR_OF_DAY);
+        minuto = calendario.get(Calendar.MINUTE);
+        segundo = calendario.get(Calendar.SECOND);
+        
+        String hr;
+        hr = null;
+
+        hr = (hora<=9?"0"+hora:hora) + ":" + (minuto<=9?"0"+minuto:minuto) + ":" + (segundo<=9?"0"+segundo:segundo);
+            
+        return hr;
     }
 
     /**
