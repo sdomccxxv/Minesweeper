@@ -6,10 +6,15 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
@@ -33,6 +38,7 @@ public class frmTablero extends javax.swing.JFrame {
     private Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
     private Icon infoIcon = UIManager.getIcon("OptionPane.informationIcon");
     private Icon warnIcon = UIManager.getIcon("OptionPane.warningIcon");
+    //private final Icon mine = (Icon) ImageIO.read(getClass().getResource("mina3.png");
     /**
      * Creates new form frmTablero
      */
@@ -70,9 +76,9 @@ public class frmTablero extends javax.swing.JFrame {
             @Override
             public void accept(List<Casilla> t) {
                 for(Casilla casillaConMina: t){
-                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setText("*");
+                    //casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setText("*");
                     
-                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setDisabledIcon(errorIcon);
+                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setDisabledIcon(new ImageIcon("mina3.png"));
 
                     if (casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].isEnabled()) {
                         casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(false);
@@ -157,14 +163,16 @@ public class frmTablero extends javax.swing.JFrame {
                     public void mouseClicked(MouseEvent e) {
 
                         if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
-                            casillasTablero[k][l].setIcon(infoIcon);
+                            //casillasTablero[k][l].setIcon(infoIcon);
+                            casillasTablero[k][l].setIcon(new ImageIcon("flag.png")); // bandera
                             /*if (casillasTablero[k][l].isEnabled()) {
                                 casillasTablero[k][l].setEnabled(false);
-                            } else {
+                                } else {
                                 casillasTablero[k][l].setEnabled(true);
-                            }*/
+                                }*/
                             //JOptionPane.showMessageDialog(null, "Click derecho", "Fin del Juego", JOptionPane.ERROR_MESSAGE);
-                        } else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1){
+
+                        } else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
                             casillasTablero[k][l].addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
