@@ -2,11 +2,19 @@ package com.sdomumgpii.minesweeper;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import static java.lang.Thread.sleep;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  *
@@ -18,9 +26,13 @@ public class frmTablero extends javax.swing.JFrame {
     boolean estado, isClicked = false;
     Thread hilo;
     
-    JButton[][] casillasTablero;
+    JToggleButton[][] casillasTablero;
     
     tableroJuego tableroMines;
+    
+    private Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
+    private Icon infoIcon = UIManager.getIcon("OptionPane.informationIcon");
+    private Icon warnIcon = UIManager.getIcon("OptionPane.warningIcon");
     /**
      * Creates new form frmTablero
      */
@@ -59,6 +71,16 @@ public class frmTablero extends javax.swing.JFrame {
             public void accept(List<Casilla> t) {
                 for(Casilla casillaConMina: t){
                     casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setText("*");
+                    
+                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setDisabledIcon(errorIcon);
+
+                    if (casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].isEnabled()) {
+                        casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(false);
+                    } else {
+                        casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(true);
+                    }
+                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(false);
+
                 }
             }
         });
@@ -90,37 +112,66 @@ public class frmTablero extends javax.swing.JFrame {
         this.numFilas = filas;
         this.numCol = col;
         this.numMinas = minas;
-        
+
         jLabel1.setText(Integer.toString(minas));
-        
+
         int posX = 25, posY = 100, ancho = 50, alto = 50;
-        
-        casillasTablero = new JButton[numFilas][numCol];
+
+        casillasTablero = new JToggleButton[numFilas][numCol];
         for (int i = 0; i < casillasTablero.length; i++) {
             for (int j = 0; j < casillasTablero[i].length; j++) {
-                casillasTablero[i][j] = new JButton();
-                casillasTablero[i][j].setName(i+","+j);
+                final int k = i;
+                final int l = j;
+
+                casillasTablero[i][j] = new JToggleButton();
+                casillasTablero[i][j].setName(i + "," + j);
                 casillasTablero[i][j].setBorder(null);
-                
+                //casillasTablero[i][j].setIcon((errorIcon));
+                //casillasTablero[i][j].setSelectedIcon(infoIcon);
+                //casillasTablero[i][j].setDisabledIcon(errorIcon);
+
                 if (i == 0 && j == 0) {
                     casillasTablero[i][j].setBounds(posX, posY, ancho, alto);
-                }else if (i == 0 && j != 0){
+                } else if (i == 0 && j != 0) {
                     casillasTablero[i][j].setBounds(
-                            casillasTablero[i][j-1].getX()+casillasTablero[i][j-1].getWidth(), 
-                            posY, 
-                            ancho, 
+                            casillasTablero[i][j - 1].getX() + casillasTablero[i][j - 1].getWidth(),
+                            posY,
+                            ancho,
                             alto);
-                }else{
+                } else {
                     casillasTablero[i][j].setBounds(
-                            casillasTablero[i-1][j].getX(), 
-                            casillasTablero[i-1][j].getY()+casillasTablero[i-1][j].getHeight(), 
-                            ancho, 
+                            casillasTablero[i - 1][j].getX(),
+                            casillasTablero[i - 1][j].getY() + casillasTablero[i - 1][j].getHeight(),
+                            ancho,
                             alto);
                 }
                 casillasTablero[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         btnClick(e);
+                    }
+                });
+
+                casillasTablero[i][j].addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+
+                        if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+                            casillasTablero[k][l].setIcon(infoIcon);
+                            /*if (casillasTablero[k][l].isEnabled()) {
+                                casillasTablero[k][l].setEnabled(false);
+                            } else {
+                                casillasTablero[k][l].setEnabled(true);
+                            }*/
+                            //JOptionPane.showMessageDialog(null, "Click derecho", "Fin del Juego", JOptionPane.ERROR_MESSAGE);
+                        } else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1){
+                            casillasTablero[k][l].addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    btnClick(e);
+                                }
+                            });
+                        }
                     }
                 });
                 getContentPane().add(casillasTablero[i][j]);
@@ -170,7 +221,7 @@ public class frmTablero extends javax.swing.JFrame {
     }
     
     private void btnClick(ActionEvent e) {
-        JButton btn = (JButton)e.getSource();
+        JToggleButton btn = (JToggleButton)e.getSource();
         String[] coordenada = btn.getName().split(",");
         
         int Fila = Integer.parseInt(coordenada[0]);
@@ -184,13 +235,16 @@ public class frmTablero extends javax.swing.JFrame {
         
         if(tableroMines.casillas[Fila][Col].isMina()){
             hilo.stop();
+            if (casillasTablero[Fila][Col].isEnabled()) {
+                casillasTablero[Fila][Col].setEnabled(false);
+            } else {
+                casillasTablero[Fila][Col].setEnabled(true);
+            }
             JOptionPane.showMessageDialog(null, "HAS PERDIDO", "Fin del Juego", JOptionPane.ERROR_MESSAGE);
+            
         }
-        
         tableroMines.selCasilla(Fila, Col);
     }
-
-    
 
     /**
      * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
