@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
+import java.util.Calendar;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -27,13 +28,14 @@ import javax.swing.UIManager;
  */
 public class frmTablero extends javax.swing.JFrame {
 
-    int numFilas, numCol, numMinas, miliseg, seg, min;
+    int numFilas, numCol, numMinas, miliseg, seg, min, hora, minuto, segundo;
     boolean estado, isClicked = false;
-    Thread hilo;
+    Thread hilo, hilo2;
     
     JToggleButton[][] casillasTablero;
     
     tableroJuego tableroMines;
+    splashScreen splash;
     
     private Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
     private Icon infoIcon = UIManager.getIcon("OptionPane.informationIcon");
@@ -45,6 +47,7 @@ public class frmTablero extends javax.swing.JFrame {
     public frmTablero() {
         initComponents();
         Nuevo();
+        reloj();
     }
     
     void borrarControles(){
@@ -88,6 +91,7 @@ public class frmTablero extends javax.swing.JFrame {
                     casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(false);
 
                 }
+                JOptionPane.showMessageDialog(null, "HAS PERDIDO", "Fin del Juego", JOptionPane.ERROR_MESSAGE);
             }
         });
         
@@ -95,8 +99,19 @@ public class frmTablero extends javax.swing.JFrame {
             @Override
             public void accept(List<Casilla> t) {
                 for(Casilla casillaConMina: t){
-                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setText(":)");
+                    //casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setText(":)");
+                    
+                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setDisabledIcon(new ImageIcon("feliz.png"));
+
+                    if (casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].isEnabled()) {
+                        casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(false);
+                    } else {
+                        casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(true);
+                    }
+                    casillasTablero[casillaConMina.getPosfila()][casillaConMina.getPoscol()].setEnabled(false);
+                    hilo.stop();
                 }
+                JOptionPane.showMessageDialog(null, "HAS GANADO", "Fin del Juego", JOptionPane.DEFAULT_OPTION);
             }
         });
         
@@ -244,13 +259,17 @@ public class frmTablero extends javax.swing.JFrame {
         
         if(tableroMines.casillas[Fila][Col].isMina()){
             hilo.stop();
+            
+            sound soundsT = new sound();
+           
+            soundsT.tiposonido(1);
+            soundsT.start();
+            
             if (casillasTablero[Fila][Col].isEnabled()) {
                 casillasTablero[Fila][Col].setEnabled(false);
             } else {
                 casillasTablero[Fila][Col].setEnabled(true);
             }
-            JOptionPane.showMessageDialog(null, "HAS PERDIDO", "Fin del Juego", JOptionPane.ERROR_MESSAGE);
-            
         }
         tableroMines.selCasilla(Fila, Col);
     }
@@ -264,8 +283,9 @@ public class frmTablero extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        lbTempo = new javax.swing.JLabel();
+        lbReloj = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        lbTempo = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -277,14 +297,20 @@ public class frmTablero extends javax.swing.JFrame {
         jLabel1.setIcon(new javax.swing.ImageIcon("D:\\OneDrive - Universidad Mariano Gálvez\\U\\4to Semestre\\2 - Programacion II\\Primer Parcial\\mina3.png")); // NOI18N
         jLabel1.setText("99");
 
+        lbReloj.setBackground(new java.awt.Color(0, 0, 0));
+        lbReloj.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lbReloj.setForeground(new java.awt.Color(153, 0, 0));
+        lbReloj.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbReloj.setText("00:00");
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setIcon(new javax.swing.ImageIcon("D:\\OneDrive - Universidad Mariano Gálvez\\U\\4to Semestre\\2 - Programacion II\\Primer Parcial\\Minesweeper\\umg.png")); // NOI18N
+
         lbTempo.setBackground(new java.awt.Color(0, 0, 0));
         lbTempo.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         lbTempo.setForeground(new java.awt.Color(153, 0, 0));
         lbTempo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbTempo.setText("00:00");
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon("D:\\OneDrive - Universidad Mariano Gálvez\\U\\4to Semestre\\2 - Programacion II\\Primer Parcial\\Minesweeper\\umg.png")); // NOI18N
 
         jMenu1.setText("Juego");
 
@@ -312,25 +338,38 @@ public class frmTablero extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(118, 118, 118)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lbReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(16, 16, 16)
+                    .addComponent(lbTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(278, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lbTempo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(214, 214, 214))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 158, Short.MAX_VALUE)
+                .addComponent(lbReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(16, 16, 16)
+                    .addComponent(lbTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(204, Short.MAX_VALUE)))
         );
 
         setSize(new java.awt.Dimension(418, 309));
@@ -348,6 +387,44 @@ public class frmTablero extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    public void reloj(){
+        estado = true;
+        
+        hilo2 = new Thread(){
+          public void run()  {
+              for(;;){
+                  if(estado == true){
+                      try{
+                          sleep(1);
+                          lbReloj.setText(hora());
+                      }catch(Exception e) {
+                          
+                      }
+                  }else{
+                     break; 
+                  }
+              }
+          }
+        };
+        hilo2.start();
+    }
+    
+    public String hora(){
+        
+        
+        Calendar calendario = Calendar.getInstance();
+        hora = calendario.get(Calendar.HOUR_OF_DAY);
+        minuto = calendario.get(Calendar.MINUTE);
+        segundo = calendario.get(Calendar.SECOND);
+        
+        String hr;
+        hr = null;
+
+        hr = (hora<=9?"0"+hora:hora) + ":" + (minuto<=9?"0"+minuto:minuto) + ":" + (segundo<=9?"0"+segundo:segundo);
+            
+        return hr;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -390,6 +467,7 @@ public class frmTablero extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    public javax.swing.JLabel lbReloj;
     public javax.swing.JLabel lbTempo;
     // End of variables declaration//GEN-END:variables
 }

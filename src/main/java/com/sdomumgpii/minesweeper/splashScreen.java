@@ -8,6 +8,9 @@ package com.sdomumgpii.minesweeper;
 import com.sun.awt.AWTUtilities;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 /**
  *
@@ -27,7 +30,11 @@ public class splashScreen extends javax.swing.JFrame implements Runnable {
         AWTUtilities.setWindowOpaque(this, false);
         tiempo = new Thread(this);
         tiempo.start();
+        sound soundsT = new sound();
+        soundsT.tiposonido(0);
+        soundsT.start();
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The

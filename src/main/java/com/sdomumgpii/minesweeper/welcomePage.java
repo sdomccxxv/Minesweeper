@@ -24,7 +24,7 @@ public class welcomePage extends javax.swing.JFrame {
     /**
      * Creates new form welcomePage
      */
-    public int  miliseg, seg, min, hora, minuto, segundo;;
+    public int  miliseg, seg, min, hora, minuto, segundo;
     boolean estado;
     Thread hilo;
    
@@ -250,7 +250,7 @@ public class welcomePage extends javax.swing.JFrame {
         frmTablero formTablero = new frmTablero();
         formTablero.crearTablero(5,5,minas);
         formTablero.crearCasillas(5,5,minas);
-        formTablero.setSize(325,445);
+        formTablero.setSize(325,500);
         
         formTablero.show();
         this.dispose();
